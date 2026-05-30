@@ -10,7 +10,7 @@ import { JwtStrategy } from './jwt.strategy';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'SECRET_KHUSUS_FINTRACK',
+      secret: process.env.JWT_SECRET || 'SECRET_KHUSUS_MONEE',
       signOptions: { expiresIn: '1d' },
     }),
   ],
