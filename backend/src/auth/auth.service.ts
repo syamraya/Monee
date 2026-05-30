@@ -38,7 +38,7 @@ export class AuthService {
     try {
      await this.mailService.sendMail(
   dto.email,
-  'Verify your FinTrack Account',
+  'Verify your Monee Account',
       `
       <div style="background:#ffffff; padding:40px 20px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px; margin:0 auto; border-collapse:collapse;">
@@ -50,8 +50,8 @@ export class AuthService {
                   <td align="left" valign="middle">
                     <table cellpadding="0" cellspacing="0" border="0">
                       <tr>
-                        <td style="width:36px; height:36px; background:#111111; border-radius:8px; text-align:center; font-family:Georgia,serif; font-style:italic; color:#ffffff; font-size:16px; line-height:36px; font-weight:bold;">F</td>
-                        <td style="font-family:Georgia,serif; font-style:italic; font-size:18px; color:#111111; padding-left:12px; font-weight:normal; letter-spacing:-0.5px;">FinTrack</td>
+                        <td style="width:36px; height:36px; background:#111111; border-radius:8px; text-align:center; font-family:Georgia,serif; font-style:italic; color:#ffffff; font-size:16px; line-height:36px; font-weight:bold;">M</td>
+                        <td style="font-family:Georgia,serif; font-style:italic; font-size:18px; color:#111111; padding-left:12px; font-weight:normal; letter-spacing:-0.5px;">Monee</td>
                       </tr>
                     </table>
                   </td>
@@ -68,7 +68,7 @@ export class AuthService {
               <p style="font-size:11px; font-weight:700; letter-spacing:1.5px; color:#999999; text-transform:uppercase; margin:0 0 16px;">Account Verification</p>
               <h1 style="font-family:Georgia,serif; font-size:32px; font-weight:400; color:#111111; line-height:1.2; margin:0 0 24px; letter-spacing:-0.5px;">Verify your<br/><span style="font-style:italic;">email address.</span></h1>
               <p style="font-size:14px; color:#555555; line-height:1.6; margin:0 0 32px; font-weight:400;">
-                Welcome! Enter the one-time code below to activate your <strong style="color:#111111; font-weight:600;">FinTrack</strong> account. This code is valid for 5 minutes and can only be used once.
+                Welcome! Enter the one-time code below to activate your <strong style="color:#111111; font-weight:600;">Monee</strong> account. This code is valid for 5 minutes and can only be used once.
               </p>
 
               <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#faf9f6; border:1px solid #f0ede6; border-radius:12px; margin-bottom:32px; border-collapse:separate;">
@@ -116,7 +116,7 @@ export class AuthService {
 
               <hr style="border:none; border-top:1px solid #ededed; margin:0 0 32px;"/>
               <p style="font-size:13px; color:#999999; line-height:1.6; margin:0 0 40px;">
-                Didn't create a FinTrack account? You can safely ignore this email — no action is needed and your code will expire automatically. <a href="https://fintrack.app/support" style="color:#666666; text-decoration:underline;">Contact support</a> if you have concerns.
+                Didn't create a Monee account? You can safely ignore this email — no action is needed and your code will expire automatically. <a href="https://monee.app/support" style="color:#666666; text-decoration:underline;">Contact support</a> if you have concerns.
               </p>
             </td>
           </tr>
@@ -125,11 +125,11 @@ export class AuthService {
             <td style="padding-top:24px; border-top:1px solid #f2f2f2;">
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
-                  <td align="left" style="font-size:11px; font-weight:600; color:#999999; letter-spacing:1px;">© 2026 FINTRACK</td>
+                  <td align="left" style="font-size:11px; font-weight:600; color:#999999; letter-spacing:1px;">© 2026 MONEE</td>
                   <td align="right" style="font-size:12px; color:#999999;">
-                    <a href="https://fintrack.app/support" style="color:#999999; text-decoration:none; margin-right:16px;">Support</a>
-                    <a href="https://fintrack.app/privacy" style="color:#999999; text-decoration:none; margin-right:16px;">Privacy</a>
-                    <a href="https://fintrack.app/unsubscribe" style="color:#999999; text-decoration:none;">Unsubscribe</a>
+                    <a href="https://monee.app/support" style="color:#999999; text-decoration:none; margin-right:16px;">Support</a>
+                    <a href="https://monee.app/privacy" style="color:#999999; text-decoration:none; margin-right:16px;">Privacy</a>
+                    <a href="https://monee.app/unsubscribe" style="color:#999999; text-decoration:none;">Unsubscribe</a>
                   </td>
                 </tr>
               </table>
@@ -234,7 +234,7 @@ export class AuthService {
     try {
       await this.mailService.sendMail(
   dto.email,
-  'Reset your FinTrack Password',
+  'Reset your Monee Password',
       `
       <div style="background:#ffffff; padding:40px 20px; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
         <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px; margin:0 auto; border-collapse:collapse;">
@@ -247,7 +247,7 @@ export class AuthService {
                     <table cellpadding="0" cellspacing="0" border="0">
                       <tr>
                         <td style="width:36px; height:36px; background:#111111; border-radius:8px; text-align:center; font-family:Georgia,serif; font-style:italic; color:#ffffff; font-size:16px; line-height:36px; font-weight:bold;">F</td>
-                        <td style="font-family:Georgia,serif; font-style:italic; font-size:18px; color:#111111; padding-left:12px; font-weight:normal; letter-spacing:-0.5px;">FinTrack</td>
+                        <td style="font-family:Georgia,serif; font-style:italic; font-size:18px; color:#111111; padding-left:12px; font-weight:normal; letter-spacing:-0.5px;">Monee</td>
                       </tr>
                     </table>
                   </td>
@@ -264,7 +264,7 @@ export class AuthService {
               <p style="font-size:11px; font-weight:700; letter-spacing:1.5px; color:#999999; text-transform:uppercase; margin:0 0 16px;">Password Reset</p>
               <h1 style="font-family:Georgia,serif; font-size:32px; font-weight:400; color:#111111; line-height:1.2; margin:0 0 24px; letter-spacing:-0.5px;">Reset your<br/><span style="font-style:italic;">password.</span></h1>
               <p style="font-size:14px; color:#555555; line-height:1.6; margin:0 0 32px; font-weight:400;">
-                Hi <strong style="color:#111111; font-weight:600;">${user.name || 'there'}</strong> — we received a request to reset the password on your FinTrack account. Use the code below to set a new one.
+                Hi <strong style="color:#111111; font-weight:600;">${user.name || 'there'}</strong> — we received a request to reset the password on your Monee account. Use the code below to set a new one.
               </p>
 
               <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#faf9f6; border:1px solid #f0ede6; border-radius:12px; margin-bottom:32px; border-collapse:separate;">
@@ -312,7 +312,7 @@ export class AuthService {
 
               <hr style="border:none; border-top:1px solid #ededed; margin:0 0 32px;"/>
               <p style="font-size:13px; color:#999999; line-height:1.6; margin:0 0 40px;">
-                For your security, this code expires in 5 minutes and is single-use only. Never share this code with anyone. FinTrack support will never ask for it. <a href="https://fintrack.app/security" style="color:#666666; text-decoration:underline;">Learn about account security →</a>
+                For your security, this code expires in 5 minutes and is single-use only. Never share this code with anyone. Monee support will never ask for it. <a href="https://monee.app/security" style="color:#666666; text-decoration:underline;">Learn about account security →</a>
               </p>
             </td>
           </tr>
@@ -321,11 +321,11 @@ export class AuthService {
             <td style="padding-top:24px; border-top:1px solid #f2f2f2;">
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
-                  <td align="left" style="font-size:11px; font-weight:600; color:#999999; letter-spacing:1px;">© 2026 FINTRACK</td>
+                  <td align="left" style="font-size:11px; font-weight:600; color:#999999; letter-spacing:1px;">© 2026 MONEE</td>
                   <td align="right" style="font-size:12px; color:#999999;">
-                    <a href="https://fintrack.app/support" style="color:#999999; text-decoration:none; margin-right:16px;">Support</a>
-                    <a href="https://fintrack.app/privacy" style="color:#999999; text-decoration:none; margin-right:16px;">Privacy</a>
-                    <a href="https://fintrack.app/unsubscribe" style="color:#999999; text-decoration:none;">Unsubscribe</a>
+                    <a href="https://monee.app/support" style="color:#999999; text-decoration:none; margin-right:16px;">Support</a>
+                    <a href="https://monee.app/privacy" style="color:#999999; text-decoration:none; margin-right:16px;">Privacy</a>
+                    <a href="https://monee.app/unsubscribe" style="color:#999999; text-decoration:none;">Unsubscribe</a>
                   </td>
                 </tr>
               </table>
