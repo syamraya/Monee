@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String                 @id @default(uuid())
+  email        String                 @unique
+  password     String
+  name         String?
+  role         Role                   @default(USER)
+  balance      Float                  @default(0)
+  avatarUrl    String?
+  createdAt    DateTime               @default(now())
+  recurrents   RecurrentTransaction[]
+  savingsGoals SavingGoal[]
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  amount        Float
+  type          String
+  description   String?
+  userId        String
+  categoryId    String
+  balanceBefore Float
+  balanceAfter  Float
+  createdAt     DateTime @default(now())
+  category      Category @relation(fields: [categoryId], references: [id])
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id           String          @id @default(uuid())
+  name         String          @unique
+  type         TransactionType
+  transactions Transaction[]
+}
+
+model SavingGoal {
+  id              String    @id @default(uuid())
+  name            String
+  targetAmount    Float
+  currentAmount   Float     @default(0)
+  category        String    @default("Lainnya")
+  deadline        DateTime?
+  isRecurrent     Boolean   @default(false)
+  recurrentAmount Float     @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model RecurrentTransaction {
+  id          String          @id @default(uuid())
+  userId      String
+  name        String
+  amount      Float
+  type        TransactionType
+  categoryId  String
+  description String?
+  frequency   String
+  startDate   DateTime        @default(now())
+  nextRunDate DateTime
+  isActive    Boolean         @default(true)
+  user        User            @relation(fields: [userId], references: [id])
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
