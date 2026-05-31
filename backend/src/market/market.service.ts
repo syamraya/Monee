@@ -6,9 +6,18 @@ import {
 import axios from 'axios';
 import * as https from 'https';
 
+
+
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 const cache = new Map<string, { data: any; expiredAt: number }>();
+
+// Taruh setelah INTERVAL_TO_DAYS yang sudah ada
+const INDEX_TICKERS = [
+  { symbol: 'SPY', label: 'S&P 500' },
+  { symbol: 'QQQ', label: 'NASDAQ 100' },
+  { symbol: 'DIA', label: 'Dow Jones' },
+];
 
 function getCache(key: string) {
   const entry = cache.get(key);
@@ -85,6 +94,143 @@ export class MarketService {
       throw new InternalServerErrorException('Gagal mengambil data crypto.');
     }
   }
+
+  // ── Alpha Vantage: harga satu saham ──────────────────────────
+async getStockQuote(symbol: string) {
+  const cacheKey = `stock_quote_${symbol}`;
+  const cached = getCache(cacheKey);
+  if (cached) return cached;
+
+  const apiKey = process.env.ALPHA_VANTAGE_KEY;
+  if (!apiKey) throw new InternalServerErrorException('ALPHA_VANTAGE_KEY belum di-set');
+
+  try {
+    const { data } = await axios.get('https://www.alphavantage.co/query', {
+      httpsAgent,
+      params: {
+        function: 'GLOBAL_QUOTE',
+        symbol,
+        apikey: apiKey,
+      },
+    });
+
+    const q = data['Global Quote'];
+    if (!q || !q['05. price']) throw new Error(`Tidak ada data untuk ${symbol}`);
+
+    const open  = parseFloat(q['02. open']);
+    const close = parseFloat(q['05. price']);
+
+    const result = {
+      symbol,
+      open,
+      high:      parseFloat(q['03. high']),
+      low:       parseFloat(q['04. low']),
+      close,
+      volume:    parseInt(q['06. volume']),
+      change:    parseFloat(q['09. change']),
+      changePct: parseFloat(q['10. change percent']),
+    };
+
+    setCache(cacheKey, result, 300_000);
+    return result;
+  } catch (error: any) {
+    this.logger.error(`Alpha Vantage quote error (${symbol}): ${error.message}`);
+    throw new InternalServerErrorException(`Gagal mengambil data saham ${symbol}`);
+  }
+}
+
+// ── Alpha Vantage: indices (SPY, QQQ, DIA) ───────────────────
+async getStockIndices() {
+  const cacheKey = 'stock_indices';
+  const cached = getCache(cacheKey);
+  if (cached) return cached;
+
+  const results = await Promise.all(
+    INDEX_TICKERS.map(async ({ symbol, label }) => {
+      const quote = await this.getStockQuote(symbol);
+      return { ...quote, label };
+    }),
+  );
+
+  setCache(cacheKey, results, 300_000);
+  return results;
+}
+
+// ── Alpha Vantage: chart historis ────────────────────────────
+async getStockChart(symbol: string, range: '1D' | '1W' | '1M' = '1M') {
+  const cacheKey = `stock_chart_${symbol}_${range}`;
+  const cached = getCache(cacheKey);
+  if (cached) return cached;
+
+  const apiKey = process.env.ALPHA_VANTAGE_KEY;
+  if (!apiKey) throw new InternalServerErrorException('ALPHA_VANTAGE_KEY belum di-set');
+
+  // 1D → intraday 5min, 1W/1M → daily
+  const isIntraday = range === '1D';
+
+  try {
+    let candles: any[] = [];
+
+    if (isIntraday) {
+      const { data } = await axios.get('https://www.alphavantage.co/query', {
+        httpsAgent,
+        params: {
+          function:    'TIME_SERIES_INTRADAY',
+          symbol,
+          interval:    '5min',
+          outputsize:  'compact',
+          apikey:      apiKey,
+        },
+      });
+
+      const series = data['Time Series (5min)'];
+      if (!series) throw new Error('Tidak ada data intraday');
+
+      candles = Object.entries(series)
+        .map(([time, v]: [string, any]) => ({
+          time:  Math.floor(new Date(time).getTime() / 1000),
+          open:  parseFloat(v['1. open']),
+          high:  parseFloat(v['2. high']),
+          low:   parseFloat(v['3. low']),
+          close: parseFloat(v['4. close']),
+        }))
+        .sort((a, b) => a.time - b.time);
+
+    } else {
+      const { data } = await axios.get('https://www.alphavantage.co/query', {
+        httpsAgent,
+        params: {
+          function:   'TIME_SERIES_DAILY',
+          symbol,
+          outputsize: range === '1M' ? 'compact' : 'compact',
+          apikey:     apiKey,
+        },
+      });
+
+      const series = data['Time Series (Daily)'];
+      if (!series) throw new Error('Tidak ada data daily');
+
+      const limitDays = range === '1W' ? 7 : 30;
+
+      candles = Object.entries(series)
+        .map(([time, v]: [string, any]) => ({
+          time:  Math.floor(new Date(time).getTime() / 1000),
+          open:  parseFloat(v['1. open']),
+          high:  parseFloat(v['2. high']),
+          low:   parseFloat(v['3. low']),
+          close: parseFloat(v['4. close']),
+        }))
+        .sort((a, b) => a.time - b.time)
+        .slice(-limitDays);
+    }
+
+    setCache(cacheKey, candles, 300_000);
+    return candles;
+  } catch (error: any) {
+    this.logger.error(`Alpha Vantage chart error (${symbol}): ${error.message}`);
+    throw new InternalServerErrorException(`Gagal mengambil chart ${symbol}`);
+  }
+}
 
 async getGoldPrice() {
   const apiKey = process.env.GOLD_API_KEY;
