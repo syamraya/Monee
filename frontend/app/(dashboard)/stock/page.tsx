@@ -1,11 +1,4 @@
 "use client";
-import {
-    siNvidia,
-    siGoogle,
-    siApple,
-    siMeta,
-    siTesla,
-} from "simple-icons";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { fetchWithToken } from "@/lib/api";
@@ -30,24 +23,19 @@ import {
 
 const API = process.env.NEXT_PUBLIC_BASE_API_URL ?? "http://localhost:3001";
 
-// ── STOCKS ─────────────────────────────────────────────────────────
-// geckoId  = ID untuk CoinGecko API (dikirim ke backend /market/crypto)
-// symbol   = pasangan trading di Binance (untuk chart & analytics)
 const STOCKS = [
-    { id: "nvidia", geckoId: "nvidia", symbol: "NVDA", label: "NVIDIA", name: "NVIDIA Corporation", src: "https://cdn.simpleicons.org/nvidia/76B900" },
-    { id: "google", geckoId: "google", symbol: "GOOGL", label: "Google", name: "Alphabet Inc.", src: "https://cdn.simpleicons.org/google/4285F4" },
-    { id: "apple", geckoId: "apple", symbol: "AAPL", label: "Apple", name: "Apple Inc.", src: "https://cdn.simpleicons.org/apple/000000" },
-    { id: "meta", geckoId: "meta", symbol: "META", label: "Meta", name: "Meta Platforms Inc.", src: "https://cdn.simpleicons.org/meta/0467DF" },
-    { id: "tesla", geckoId: "tesla", symbol: "TSLA", label: "Tesla", name: "Tesla, Inc.", src: "https://cdn.simpleicons.org/tesla/CC0000" },
-]
+    { id: "nvidia", symbol: "NVDA", label: "NVIDIA", name: "NVIDIA Corporation", src: "https://cdn.simpleicons.org/nvidia/76B900" },
+    { id: "google", symbol: "GOOGL", label: "Google", name: "Alphabet Inc.", src: "https://cdn.simpleicons.org/google/4285F4" },
+    { id: "apple", symbol: "AAPL", label: "Apple", name: "Apple Inc.", src: "https://cdn.simpleicons.org/apple/000000" },
+    { id: "meta", symbol: "META", label: "Meta", name: "Meta Platforms Inc.", src: "https://cdn.simpleicons.org/meta/0467DF" },
+    { id: "tesla", symbol: "TSLA", label: "Tesla", name: "Tesla, Inc.", src: "https://cdn.simpleicons.org/tesla/CC0000" },
+];
 
+// FIX: interval di chart di-map ke range yang diterima backend stock-chart
 const INTERVALS = [
-    { label: "1m", value: "1m" },
-    { label: "5m", value: "5m" },
-    { label: "15m", value: "15m" },
-    { label: "1h", value: "1h" },
-    { label: "4h", value: "4h" },
-    { label: "1D", value: "1d" },
+    { label: "1D", value: "1D" },
+    { label: "1W", value: "1W" },
+    { label: "1M", value: "1M" },
 ] as const;
 
 type StockId = (typeof STOCKS)[number]["id"];
@@ -69,14 +57,8 @@ const fmtIDR = (n: number) =>
         maximumFractionDigits: 0,
     }).format(n ?? 0);
 
-const fmtVol = (n: number) => {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
-    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-    return n.toFixed(2);
-};
-
 // ── TYPES ─────────────────────────────────────────────────────────
-interface CryptoPrice {
+interface StockPrice {
     symbol: string;
     price_usd: number;
     price_idr: number;
@@ -112,7 +94,6 @@ function StatBox({
 hover:bg-white/6
 transition-all
 duration-300">
-
             <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">
                 {label}
             </p>
@@ -129,8 +110,8 @@ duration-300">
 }
 
 // ── CANDLESTICK CHART ─────────────────────────────────────────────
-// Chart fetch klines via backend (/market/klines) bukan langsung ke
-// Binance — karena Binance diblokir ISP (Telkom/IndiHome).
+// FIX: pakai /market/stock-chart/:symbol?range= bukan /market/klines
+// karena klines hanya support crypto (CoinGecko), bukan saham US
 function CandlestickChart({ symbol, interval }: { symbol: string; interval: Interval }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const chartRef = useRef<IChartApi | null>(null);
@@ -148,23 +129,26 @@ function CandlestickChart({ symbol, interval }: { symbol: string; interval: Inte
         setLoading(true);
         setError(false);
         try {
-            // Proxy via backend — tidak hit Binance langsung
-            const raw: any[][] = token
-                ? await fetchWithToken(token, `/market/klines?symbol=${symbol}&interval=${interval}&limit=500`)
-                : await fetch(`${API}/market/klines?symbol=${symbol}&interval=${interval}&limit=500`).then(r => r.json());
+            // FIX: pakai endpoint stock-chart, bukan klines
+            // Response: [{time, open, high, low, close}] — bukan array Binance
+            const raw: { time: number; open: number; high: number; low: number; close: number }[] = token
+                ? await fetchWithToken(token, `/market/stock-chart/${symbol}?range=${interval}`)
+                : await fetch(`${API}/market/stock-chart/${symbol}?range=${interval}`).then(r => r.json());
 
+            // FIX: format data stock-chart sudah object, bukan array index
             const candles: CandlestickData<Time>[] = raw.map((c) => ({
-                time: Math.floor(c[0] / 1000) as Time,
-                open: parseFloat(c[1]),
-                high: parseFloat(c[2]),
-                low: parseFloat(c[3]),
-                close: parseFloat(c[4]),
+                time: c.time as Time,
+                open: c.open,
+                high: c.high,
+                low: c.low,
+                close: c.close,
             }));
 
+            // Volume tidak tersedia dari Alpha Vantage stock-chart, set 0
             const volumes = raw.map((c) => ({
-                time: Math.floor(c[0] / 1000) as Time,
-                value: parseFloat(c[5]),
-                color: parseFloat(c[4]) >= parseFloat(c[1]) ? "#3b82f620" : "#ef444420",
+                time: c.time as Time,
+                value: 0,
+                color: c.close >= c.open ? "#3b82f620" : "#ef444420",
             }));
 
             seriesRef.current?.setData(candles);
@@ -313,8 +297,8 @@ function CandlestickChart({ symbol, interval }: { symbol: string; interval: Inte
 // ── PAGE ──────────────────────────────────────────────────────────
 export default function StockPage() {
     const [activeCoin, setActiveCoin] = useState<StockId>("nvidia");
-    const [activeInterval, setActiveInterval] = useState<Interval>("15m");
-    const [price, setPrice] = useState<CryptoPrice | null>(null);
+    const [activeInterval, setActiveInterval] = useState<Interval>("1M");
+    const [price, setPrice] = useState<StockPrice | null>(null);
     const [analytics, setAnalytics] = useState<Analytics | null>(null);
     const [loadPrice, setLoadPrice] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -322,6 +306,7 @@ export default function StockPage() {
 
     const { data: session } = useSession();
     const token = (session?.user as any)?.accessToken ?? "";
+
     const isWeekend = () => {
         const day = new Date().getDay();
         return day === 0 || day === 6;
@@ -338,21 +323,43 @@ export default function StockPage() {
 
         setLoadPrice(true);
         try {
+            // FIX: pakai /market/stock/:symbol bukan /market/crypto
+            // Response: { symbol, open, high, low, close, volume, change, changePct }
             const [p, a] = await Promise.allSettled([
-                // Kirim geckoId ke backend — bukan coinId (UI id)
                 token
-                    ? fetchWithToken(token, `/market/crypto?coin=${targetCoin.geckoId}`)
-                    : fetch(`${API}/market/crypto?coin=${targetCoin.geckoId}`).then(r => r.json()),
+                    ? fetchWithToken(token, `/market/stock/${targetCoin.symbol}`)
+                    : fetch(`${API}/market/stock/${targetCoin.symbol}`).then(r => r.json()),
 
+                // FIX: analytics tetap pakai endpoint yg sama tapi symbol saham
                 token
                     ? fetchWithToken(token, `/market/analytics?symbol=${targetCoin.symbol}&interval=${interval}&limit=50`)
                     : fetch(`${API}/market/analytics?symbol=${targetCoin.symbol}&interval=${interval}&limit=50`).then(r => r.json()),
             ]);
 
-            if (id !== fetchIdRef.current) return; // stale, buang
+            if (id !== fetchIdRef.current) return;
 
-            if (p.status === "fulfilled" && p.value?.price_usd != null) setPrice(p.value);
-            if (a.status === "fulfilled" && a.value?.price != null) setAnalytics(a.value);
+            // FIX: mapping field response stock quote ke StockPrice interface
+            // stock quote: { close, changePct, high, low, ... }
+            // crypto:      { price_usd, change_24h, ... }
+            if (p.status === "fulfilled" && p.value?.close != null) {
+                setPrice({
+                    symbol: p.value.symbol,
+                    price_usd: p.value.close,
+                    price_idr: p.value.close * 16000, // kurs approx, bisa fetch live kalau mau
+                    change_24h: p.value.changePct,
+                    last_updated: new Date().toISOString(),
+                });
+            } else {
+                console.error("[fetchPrice] Stock quote failed:", p);
+            }
+
+            if (a.status === "fulfilled" && a.value?.price != null) {
+                setAnalytics(a.value);
+            } else {
+                console.error("[fetchPrice] Analytics failed:", a);
+            }
+        } catch (err) {
+            console.error("[fetchPrice] Error:", err);
         } finally {
             if (id === fetchIdRef.current) {
                 setLoadPrice(false);
@@ -389,7 +396,6 @@ export default function StockPage() {
         <div className="relative min-h-screen overflow-hidden bg-[#0b1120] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
 
             <div className="absolute top-0 left-1/4 h-125 w-125 rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
-
             <div className="absolute bottom-0 right-0 h-150 w-150 rounded-full bg-cyan-500/10 blur-[150px]" />
 
             <div className="relative z-10"></div>
@@ -424,7 +430,7 @@ export default function StockPage() {
                     </button>
                 </motion.div>
 
-                {/* COIN SELECTOR */}
+                {/* STOCK SELECTOR */}
                 <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -440,12 +446,7 @@ export default function StockPage() {
                                 : "bg-white text-slate-500"
                                 }`}
                         >
-                            <img
-                                src={c.src}
-                                alt={c.name}
-                                className="w-6 h-6"
-                            />
-
+                            <img src={c.src} alt={c.name} className="w-6 h-6" />
                             <span>{c.label}</span>
                         </button>
                     ))}
@@ -453,14 +454,9 @@ export default function StockPage() {
 
                 {/* HERO */}
                 <div className="absolute right-32 top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.06]">
-                    <img
-                        src={coin.src}
-                        alt={coin.label}
-                        className="w-72 h-72 object-contain"
-                    />
+                    <img src={coin.src} alt={coin.label} className="w-72 h-72 object-contain" />
                 </div>
                 <motion.div
-
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
@@ -475,31 +471,16 @@ shadow-[0_0_50px_rgba(16,185,129,0.08)]
 p-8
 mb-6
 "
-
                 >
-                    {/* BTC Watermark */}
+                    {/* Watermark */}
                     <div className="absolute right-40 top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.3] blur-[2px]">
-                        <img
-                            src={coin.src}
-                            alt={coin.label}
-                            className="w-80 h-80 object-contain"
-                        />
+                        <img src={coin.src} alt={coin.label} className="w-80 h-80 object-contain" />
                     </div>
 
-
                     <div className="relative z-10 flex flex-col items-center text-center">
-                        {/* PRICE */}
-
                         <div className="mt-4 flex items-center gap-2">
-                            <div
-                                className={`h-2 w-2 rounded-full animate-pulse ${isWeekend() ? "bg-red-400" : "bg-emerald-400"
-                                    }`}
-                            />
-
-                            <span
-                                className={`text-xs font-semibold ${isWeekend() ? "text-red-400" : "text-emerald-400"
-                                    }`}
-                            >
+                            <div className={`h-2 w-2 rounded-full animate-pulse ${isWeekend() ? "bg-red-400" : "bg-emerald-400"}`} />
+                            <span className={`text-xs font-semibold ${isWeekend() ? "text-red-400" : "text-emerald-400"}`}>
                                 {isWeekend() ? "Market Closed" : "Market Active"}
                             </span>
                         </div>
@@ -521,10 +502,7 @@ mb-6
                                     key={price?.price_usd}
                                     initial={{ opacity: 0.5, y: 4 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="text-white
-                                                text-[64px]
-                                                font-black
-                                                tracking-tight leading-none"
+                                    className="text-white text-[64px] font-black tracking-tight leading-none"
                                 >
                                     {fmtUSD(price?.price_usd ?? 0)}
                                 </motion.p>
@@ -532,8 +510,7 @@ mb-6
 
                             {!loadPrice && price && (
                                 <div className="flex items-center gap-3 mt-3">
-                                    <span className={`flex items-center gap-1 text-[13px] font-black px-3 py-1.5 rounded-full ${isUp ? "bg-blue-50 text-blue-600" : "bg-red-50 text-red-500"
-                                        }`}>
+                                    <span className={`flex items-center gap-1 text-[13px] font-black px-3 py-1.5 rounded-full ${isUp ? "bg-blue-50 text-blue-600" : "bg-red-50 text-red-500"}`}>
                                         {isUp ? <FiTrendingUp size={12} /> : <FiTrendingDown size={12} />}
                                         {isUp ? "+" : ""}{price.change_24h.toFixed(2)}%
                                     </span>
@@ -543,8 +520,6 @@ mb-6
                                 </div>
                             )}
                         </div>
-
-
                     </div>
                 </motion.div>
 
@@ -614,6 +589,6 @@ mb-6
                 </motion.div>
 
             </div>
-        </div >
+        </div>
     );
 }

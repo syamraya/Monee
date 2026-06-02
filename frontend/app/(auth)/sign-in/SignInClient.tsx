@@ -315,7 +315,7 @@ export default function SignInPage() {
           </div>
 
           <p className="text-center text-[11px] font-medium text-slate-500 mt-8">
-            © 2026 FinTrack. All rights reserved.
+            © 2026 Monee. All rights reserved.
           </p>
         </motion.div>
       </div>
