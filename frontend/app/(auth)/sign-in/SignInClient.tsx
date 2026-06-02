@@ -1,19 +1,19 @@
 "use client";
 
 // ─────────────────────────────────────────────────────────────────
-// Monee — Sign In Page
+// FinTrack — Sign In Page
 // Path: app/(auth)/sign-in/page.tsx
 // ─────────────────────────────────────────────────────────────────
 
-import { useState } from "react";
+import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { useState } from "react";
 import {
-  FiUser,
-  FiLock,
   FiArrowLeft,
+  FiLock,
   FiTrendingUp,
+  FiUser,
 } from "react-icons/fi";
 
 export default function SignInPage() {
@@ -37,7 +37,10 @@ export default function SignInPage() {
         email,
         password,
         redirect: false,
+
       });
+      console.log("SIGN IN RESULT:", result);
+
 
       if (result?.error) {
         setError("Email atau password salah. Silakan coba lagi.");
@@ -45,31 +48,24 @@ export default function SignInPage() {
       }
 
       if (result?.ok) {
-        const sessionRes = await fetch("/api/auth/session");
-        const session = await sessionRes.json();
+        window.location.href = "/dashboard";
 
-        const role = session?.user?.role;
-
-        if (role === "ADMIN") {
-          router.push("/admin");
-        } else {
-          router.push(callbackUrl);
-        }
       }
     } catch {
       setError("Terjadi kesalahan koneksi. Pastikan server aktif.");
     } finally {
       setIsLoading(false);
     }
+    
   }
 
   const inputClass =
-    "w-full h-[54px] rounded-2xl border border-slate-200 bg-white pl-12 pr-4 text-[14px] font-semibold text-slate-800 placeholder:text-slate-300 outline-none transition-all focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
+    "w-full h-[54px] rounded-2xl border border-slate-700 bg-slate-800 pl-12 pr-4 text-[14px] font-semibold text-white placeholder:text-slate-500 outline-none transition-all focus:border-green-400 focus:ring-4 focus:ring-green-400/20";
 
   return (
-    <main className="min-h-screen bg-[#F8FAFC] grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
+    <main className="min-h-screen bg-[#0d1117] grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
       {/* LEFT */}
-      <div className="hidden lg:flex relative bg-blue-600 overflow-hidden p-12 flex-col justify-between">
+      <div className="hidden lg:flex relative bg-green-400 overflow-hidden p-12 flex-col justify-between">
         <div className="absolute inset-0 opacity-[0.08]"
           style={{
             backgroundImage:
@@ -83,33 +79,33 @@ export default function SignInPage() {
 
         {/* LOGO */}
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl bg-black border border-black flex items-center justify-center shadow-lg shadow-black/30">
             <span className="text-white font-black text-sm">M</span>
           </div>
 
-          <span className="text-white text-[22px] font-black tracking-tight">
-            Mon<span className="text-blue-200">ee</span>
+          <span className="text-black text-[22px] font-black tracking-tight">
+            Monee
           </span>
         </div>
 
         {/* CONTENT */}
-        <div className="relative z-10 max-w-[480px]">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 mb-7">
-            <div className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
-            <span className="text-[11px] tracking-widest uppercase font-bold text-white/90">
-              Real-Time Finance Platform
+        <div className="relative z-10 max-w-125">
+          <div className="inline-flex items-center gap-2 rounded-full border border-black/20 bg-black/10 px-4 py-2 mb-7 shadow-lg shadow-black/20">
+            <div className="w-2 h-2 rounded-full bg-black animate-pulse" />
+            <span className="text-[11px] tracking-widest uppercase font-bold text-black/90 animate-pulse  ">
+              AI-Powered Finance Platform
             </span>
           </div>
 
-          <h1 className="text-white text-[52px] font-black leading-[1.02] tracking-tight">
-            Monitor your
-            <br />
-            financial world
-            <br />
-            <span className="text-blue-200">in one place.</span>
-          </h1>
+          <h1 className="text-[52px] font-black leading-[1.02] tracking-tight text-black bg-clip-text">
+            One Step Closer to 
+            </h1>
+          <h1 className="text-[52px] font-black leading-[1.02] tracking-tight bg-linear-to-r from-purple-500 via-purple-600 to-black bg-clip-text text-transparent italic">
+            Finacial Freedom.
+            </h1>
+            
 
-          <p className="mt-6 text-blue-100 text-[16px] leading-relaxed max-w-[380px] font-medium">
+          <p className="mt-6 text-black text-[16px] leading-relaxed max-w-95 font-medium">
             Track crypto, stocks, gold, and your spending with a modern
             institutional-grade dashboard.
           </p>
@@ -124,13 +120,13 @@ export default function SignInPage() {
           ].map((item) => (
             <div
               key={item.label}
-              className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm"
+              className="rounded-2xl border border-black/15 bg-black/10 p-4 backdrop-blur-sm shadow-lg shadow-black/20 text-center"
             >
-              <p className="text-white text-[20px] font-black">
+              <p className="text-black text-[20px] font-black">
                 {item.value}
               </p>
 
-              <p className="mt-1 text-[11px] uppercase tracking-wider font-bold text-blue-100">
+              <p className="mt-1 text-[11px] uppercase tracking-wider font-bold text-black">
                 {item.label}
               </p>
             </div>
@@ -141,10 +137,10 @@ export default function SignInPage() {
       {/* RIGHT */}
       <div className="relative flex items-center justify-center px-6 py-12 lg:px-16">
         <div
-          className="absolute inset-0 opacity-60 pointer-events-none"
+          className="absolute inset-0 opacity-10 pointer-events-none"
           style={{
             backgroundImage:
-              "radial-gradient(circle, #cbd5e1 1px, transparent 1px)",
+              "radial-gradient(circle, #22c55e 1px, transparent 1px)",
             backgroundSize: "28px 28px",
           }}
         />
@@ -157,7 +153,7 @@ export default function SignInPage() {
           {/* BACK */}
           <a
             href="/"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-blue-600 transition-colors mb-10"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-green-400 transition-colors mb-10"
           >
             <FiArrowLeft size={16} />
             Kembali ke Beranda
@@ -165,28 +161,28 @@ export default function SignInPage() {
 
           {/* MOBILE LOGO */}
           <div className="flex lg:hidden items-center gap-3 mb-10">
-            <div className="w-9 h-9 rounded-2xl bg-blue-600 flex items-center justify-center">
-              <span className="text-white font-black text-sm">M</span>
+            <div className="w-9 h-9 rounded-2xl bg-green-400 flex items-center justify-center">
+              <span className="text-white font-black text-sm">FT</span>
             </div>
 
-            <span className="text-slate-900 font-black text-xl tracking-tight">
-              Mon<span className="text-blue-600">ee</span>
+            <span className="text-white font-black text-xl tracking-tight">
+              Fin<span className="text-green-400">Track</span>
             </span>
           </div>
 
           {/* HEADER */}
           <div className="mb-8">
-            <h2 className="text-[34px] leading-[1.1] tracking-tight font-black text-slate-900">
+            <h2 className="text-[34px] leading-[1.1] tracking-tight font-black text-white">
               Welcome back to
               <br />
-              <span className="text-blue-600">Monee</span>
+              <span className="text-green-400 italic">Monee</span>
             </h2>
 
             <p className="mt-3 text-[14px] font-medium text-slate-400">
               Belum punya akun?{" "}
               <a
                 href="/sign-up"
-                className="text-blue-600 font-bold hover:underline"
+                className="text-green-400 font-bold hover:underline"
               >
                 Daftar sekarang
               </a>
@@ -220,7 +216,7 @@ export default function SignInPage() {
               <div className="relative">
                 <FiUser
                   size={17}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
                 />
 
                 <input
@@ -246,7 +242,7 @@ export default function SignInPage() {
               <div className="relative">
                 <FiLock
                   size={17}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
                 />
 
                 <input
@@ -267,7 +263,7 @@ export default function SignInPage() {
             <div className="flex justify-end">
               <a
                 href="#"
-                className="text-[12px] font-semibold text-slate-400 hover:text-blue-600"
+                className="text-[12px] font-semibold text-slate-400 hover:text-green-400"
               >
                 Lupa password?
               </a>
@@ -276,10 +272,10 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full h-[56px] rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[14px] shadow-lg shadow-blue-200 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full h-[56px] rounded-2xl bg-green-400 hover:bg-green-500 text-black font-bold text-[14px] shadow-lg shadow-green-400/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
             >
               {isLoading ? (
-                <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                <div className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
               ) : (
                 <>
                   Masuk Sekarang
@@ -290,7 +286,7 @@ export default function SignInPage() {
           </motion.form>
 
           {/* FOOTER */}
-          <div className="mt-8 rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-sm">
+          <div className="mt-8 rounded-2xl border border-slate-700 bg-slate-800 px-5 py-4 shadow-sm">
             <div className="flex items-center justify-between">
               {[
                 { sym: "BTC", val: "$67.4K", up: true },
@@ -299,18 +295,17 @@ export default function SignInPage() {
                 { sym: "IHSG", val: "7284", up: false },
               ].map((item) => (
                 <div key={item.sym} className="text-center">
-                  <p className="text-[10px] uppercase tracking-wider font-black text-slate-400">
+                  <p className="text-[10px] uppercase tracking-wider font-black text-slate-500">
                     {item.sym}
                   </p>
 
-                  <p className="text-[12px] font-black text-slate-800 mt-1">
+                  <p className="text-[12px] font-black text-white mt-1">
                     {item.val}
                   </p>
 
                   <p
-                    className={`text-[10px] font-black mt-1 ${
-                      item.up ? "text-emerald-500" : "text-red-500"
-                    }`}
+                    className={`text-[10px] font-black mt-1 ${item.up ? "text-emerald-500" : "text-red-500"
+                      }`}
                   >
                     {item.up ? "▲" : "▼"}
                   </p>
@@ -319,8 +314,8 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <p className="text-center text-[11px] font-medium text-slate-300 mt-8">
-            © 2026 Monee. All rights reserved.
+          <p className="text-center text-[11px] font-medium text-slate-500 mt-8">
+            © 2026 FinTrack. All rights reserved.
           </p>
         </motion.div>
       </div>

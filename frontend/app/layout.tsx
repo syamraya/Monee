@@ -17,8 +17,8 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Monee",
-  description: "Platform keuangan pribadi Monee",
+  title: "FinTrack",
+  description: "Platform keuangan pribadi",
 };
 
 export default function RootLayout({

@@ -1,5 +1,11 @@
 "use client";
-
+import {
+  siBitcoin,
+  siEthereum,
+  siSolana,
+  siBinance,
+  siXrp,
+} from "simple-icons";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { fetchWithToken } from "@/lib/api";
@@ -28,23 +34,25 @@ const API = process.env.NEXT_PUBLIC_BASE_API_URL ?? "http://localhost:3001";
 // geckoId  = ID untuk CoinGecko API (dikirim ke backend /market/crypto)
 // symbol   = pasangan trading di Binance (untuk chart & analytics)
 const COINS = [
-  { id: "bitcoin",  geckoId: "bitcoin",     symbol: "BTCUSDT", label: "BTC", name: "Bitcoin",  icon: "₿" },
-  { id: "ethereum", geckoId: "ethereum",    symbol: "ETHUSDT", label: "ETH", name: "Ethereum", icon: "Ξ" },
-  { id: "solana",   geckoId: "solana",      symbol: "SOLUSDT", label: "SOL", name: "Solana",   icon: "◎" },
-  { id: "bnb",      geckoId: "binancecoin", symbol: "BNBUSDT", label: "BNB", name: "BNB",      icon: "B" },
-  { id: "ripple",   geckoId: "ripple",      symbol: "XRPUSDT", label: "XRP", name: "Ripple",   icon: "✕" },
+  {
+    id: "bitcoin", geckoId: "bitcoin", symbol: "BTCUSDT", label: "BTC", name: "Bitcoin", src: "https://cdn.simpleicons.org/bitcoin/F7931A",
+  },
+  { id: "ethereum", geckoId: "ethereum", symbol: "ETHUSDT", label: "ETH", name: "Ethereum", src: "https://cdn.simpleicons.org/ethereum/3C3C3D" },
+  { id: "solana", geckoId: "solana", symbol: "SOLUSDT", label: "SOL", name: "Solana", src: "https://cdn.simpleicons.org/solana/9945FF" },
+  { id: "bnb", geckoId: "binancecoin", symbol: "BNBUSDT", label: "BNB", name: "BNB", src: "https://cdn.simpleicons.org/bnbchain/F0B90B" },
+  { id: "ripple", geckoId: "ripple", symbol: "XRPUSDT", label: "XRP", name: "Ripple", src: "https://cdn.simpleicons.org/ripple/0085C0" },
 ] as const;
 
 const INTERVALS = [
-  { label: "1m",  value: "1m"  },
-  { label: "5m",  value: "5m"  },
+  { label: "1m", value: "1m" },
+  { label: "5m", value: "5m" },
   { label: "15m", value: "15m" },
-  { label: "1h",  value: "1h"  },
-  { label: "4h",  value: "4h"  },
-  { label: "1D",  value: "1d"  },
+  { label: "1h", value: "1h" },
+  { label: "4h", value: "4h" },
+  { label: "1D", value: "1d" },
 ] as const;
 
-type CoinId   = (typeof COINS)[number]["id"];
+type CoinId = (typeof COINS)[number]["id"];
 type Interval = (typeof INTERVALS)[number]["value"];
 
 // ── HELPERS ───────────────────────────────────────────────────────
@@ -65,27 +73,27 @@ const fmtIDR = (n: number) =>
 
 const fmtVol = (n: number) => {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}K`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
   return n.toFixed(2);
 };
 
 // ── TYPES ─────────────────────────────────────────────────────────
 interface CryptoPrice {
-  symbol:       string;
-  price_usd:    number;
-  price_idr:    number;
-  change_24h:   number;
+  symbol: string;
+  price_usd: number;
+  price_idr: number;
+  change_24h: number;
   last_updated: string;
 }
 
 interface Analytics {
-  price:      number;
-  high:       number;
-  low:        number;
-  volume:     number;
+  price: number;
+  high: number;
+  low: number;
+  volume: number;
   volatility: number;
   trendScore: number;
-  sentiment:  "Bullish" | "Bearish" | "Neutral";
+  sentiment: "Bullish" | "Bearish" | "Neutral";
 }
 
 // ── SHARED COMPONENTS ─────────────────────────────────────────────
@@ -99,14 +107,21 @@ function StatBox({
   label: string; value: string; sub?: string; loading: boolean;
 }) {
   return (
-    <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-sm">
+    <div className="bg-white/4
+    border border-white/10
+    backdrop-blur-lg rounded-3xl p-5 shadow-sm
+    hover:border-emerald-500/30
+hover:bg-white/6
+transition-all
+duration-300">
+
       <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-2">
         {label}
       </p>
       {loading ? (
         <Skeleton className="w-28 h-5" />
       ) : (
-        <p className="text-slate-800 text-[18px] font-black tracking-tight">{value}</p>
+        <p className="text-white text-[18px] font-black tracking-tight">{value}</p>
       )}
       {sub && !loading && (
         <p className="text-slate-400 text-[10px] font-mono mt-1">{sub}</p>
@@ -120,12 +135,12 @@ function StatBox({
 // Binance — karena Binance diblokir ISP (Telkom/IndiHome).
 function CandlestickChart({ symbol, interval }: { symbol: string; interval: Interval }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const chartRef     = useRef<IChartApi | null>(null);
-  const seriesRef    = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const volumeRef    = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
 
   const [loading, setLoading] = useState(true);
-  const [error,   setError  ] = useState(false);
+  const [error, setError] = useState(false);
   const [hoveredCandle, setHoveredCandle] = useState<CandlestickData<Time> | null>(null);
 
   const { data: session } = useSession();
@@ -141,15 +156,15 @@ function CandlestickChart({ symbol, interval }: { symbol: string; interval: Inte
         : await fetch(`${API}/market/klines?symbol=${symbol}&interval=${interval}&limit=500`).then(r => r.json());
 
       const candles: CandlestickData<Time>[] = raw.map((c) => ({
-        time:  Math.floor(c[0] / 1000) as Time,
-        open:  parseFloat(c[1]),
-        high:  parseFloat(c[2]),
-        low:   parseFloat(c[3]),
+        time: Math.floor(c[0] / 1000) as Time,
+        open: parseFloat(c[1]),
+        high: parseFloat(c[2]),
+        low: parseFloat(c[3]),
         close: parseFloat(c[4]),
       }));
 
       const volumes = raw.map((c) => ({
-        time:  Math.floor(c[0] / 1000) as Time,
+        time: Math.floor(c[0] / 1000) as Time,
         value: parseFloat(c[5]),
         color: parseFloat(c[4]) >= parseFloat(c[1]) ? "#3b82f620" : "#ef444420",
       }));
@@ -212,12 +227,12 @@ function CandlestickChart({ symbol, interval }: { symbol: string; interval: Inte
     volumeSeries.priceScale().applyOptions({ scaleMargins: { top: 0.85, bottom: 0 } });
 
     const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor:        "#3b82f6",
-      downColor:      "#ef4444",
-      borderUpColor:  "#3b82f6",
-      borderDownColor:"#ef4444",
-      wickUpColor:    "#3b82f6",
-      wickDownColor:  "#ef4444",
+      upColor: "#3b82f6",
+      downColor: "#ef4444",
+      borderUpColor: "#3b82f6",
+      borderDownColor: "#ef4444",
+      wickUpColor: "#3b82f6",
+      wickDownColor: "#ef4444",
     });
     candleSeries.priceScale().applyOptions({ scaleMargins: { top: 0.05, bottom: 0.2 } });
 
@@ -229,14 +244,14 @@ function CandlestickChart({ symbol, interval }: { symbol: string; interval: Inte
       }
     });
 
-    chartRef.current  = chart;
+    chartRef.current = chart;
     seriesRef.current = candleSeries;
     volumeRef.current = volumeSeries;
 
     const ro = new ResizeObserver(() => {
       if (!containerRef.current) return;
       chart.applyOptions({
-        width:  containerRef.current.clientWidth,
+        width: containerRef.current.clientWidth,
         height: containerRef.current.clientHeight,
       });
     });
@@ -264,15 +279,14 @@ function CandlestickChart({ symbol, interval }: { symbol: string; interval: Inte
             {(["O", "H", "L", "C"] as const).map((k, i) => {
               const val = [
                 hoveredCandle.open, hoveredCandle.high,
-                hoveredCandle.low,  hoveredCandle.close,
+                hoveredCandle.low, hoveredCandle.close,
               ][i];
               const isUp = hoveredCandle.close >= hoveredCandle.open;
               return (
                 <div key={k} className="flex items-center gap-1">
                   <span className="text-slate-400 text-[10px] font-black">{k}</span>
-                  <span className={`text-[11px] font-black font-mono ${
-                    k === "C" ? isUp ? "text-blue-600" : "text-red-500" : "text-slate-700"
-                  }`}>
+                  <span className={`text-[11px] font-black font-mono ${k === "C" ? isUp ? "text-blue-600" : "text-red-500" : "text-slate-700"
+                    }`}>
                     {fmtUSD(val as number, (val as number) < 1 ? 6 : 2)}
                   </span>
                 </div>
@@ -300,13 +314,13 @@ function CandlestickChart({ symbol, interval }: { symbol: string; interval: Inte
 
 // ── PAGE ──────────────────────────────────────────────────────────
 export default function CryptoPage() {
-  const [activeCoin,     setActiveCoin    ] = useState<CoinId>("bitcoin");
+  const [activeCoin, setActiveCoin] = useState<CoinId>("bitcoin");
   const [activeInterval, setActiveInterval] = useState<Interval>("15m");
-  const [price,          setPrice         ] = useState<CryptoPrice | null>(null);
-  const [analytics,      setAnalytics     ] = useState<Analytics | null>(null);
-  const [loadPrice,      setLoadPrice     ] = useState(true);
-  const [refreshing,     setRefreshing    ] = useState(false);
-  const [lastUpdate,     setLastUpdate    ] = useState(new Date());
+  const [price, setPrice] = useState<CryptoPrice | null>(null);
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [loadPrice, setLoadPrice] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
 
   const { data: session } = useSession();
   const token = (session?.user as any)?.accessToken ?? "";
@@ -336,7 +350,7 @@ export default function CryptoPage() {
       if (id !== fetchIdRef.current) return; // stale, buang
 
       if (p.status === "fulfilled" && p.value?.price_usd != null) setPrice(p.value);
-      if (a.status === "fulfilled" && a.value?.price    != null) setAnalytics(a.value);
+      if (a.status === "fulfilled" && a.value?.price != null) setAnalytics(a.value);
     } finally {
       if (id === fetchIdRef.current) {
         setLoadPrice(false);
@@ -370,11 +384,14 @@ export default function CryptoPage() {
   const isUp = (price?.change_24h ?? 0) >= 0;
 
   return (
-    <div
-      className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 xl:px-10"
-      style={{ fontFamily: "var(--font-sans, 'Plus Jakarta Sans', sans-serif)" }}
-    >
-      <div className="max-w-[1400px] mx-auto">
+    <div className="relative min-h-screen overflow-hidden bg-[#0b1120] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
+
+      <div className="absolute top-0 left-1/4 h-125 w-125 rounded-full bg-emerald-500/10 blur-[120px] pointer-events-none" />
+
+      <div className="absolute bottom-0 right-0 h-150 w-150 rounded-full bg-cyan-500/10 blur-[150px]" />
+
+      <div className="relative z-10"></div>
+      <div className="max-w-350 mx-auto">
 
         {/* HEADER */}
         <motion.div
@@ -384,7 +401,7 @@ export default function CryptoPage() {
           className="flex items-center justify-between mb-7"
         >
           <div>
-            <h1 className="text-slate-800 text-[26px] font-black tracking-tight">
+            <h1 className="text-green-400 text-[26px] font-black tracking-tight">
               Crypto Market
             </h1>
             <p className="text-slate-400 text-[12px] font-mono mt-0.5">
@@ -416,32 +433,71 @@ export default function CryptoPage() {
             <button
               key={c.id}
               onClick={() => setActiveCoin(c.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-black transition-all border ${
-                activeCoin === c.id
-                  ? "bg-blue-50 border-blue-200 text-blue-600 shadow-sm"
-                  : "bg-white border-slate-200 text-slate-500 hover:border-blue-200 hover:bg-blue-50"
-              }`}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl ${activeCoin === c.id
+                ? "bg-green-400 text-white"
+                : "bg-white text-slate-500"
+                }`}
             >
-              <span className="text-[15px]">{c.icon}</span>
-              {c.label}
-              <span className="text-[10px] font-mono opacity-60">{c.name}</span>
+              <img
+                src={c.src}
+                alt={c.name}
+                className="w-6 h-6"
+              />
+
+              <span>{c.label}</span>
             </button>
           ))}
         </motion.div>
 
         {/* HERO */}
+        <div className="absolute right-32 top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.06]">
+          <img
+            src={coin.src}
+            alt={coin.label}
+            className="w-72 h-72 object-contain"
+          />
+        </div>
         <motion.div
+
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm mb-5"
+          className="
+relative
+overflow-hidden
+rounded-4xl
+border border-white/10
+bg-white/3
+backdrop-blur-xl
+shadow-[0_0_50px_rgba(16,185,129,0.08)]
+p-8
+mb-6
+"
+
         >
-          <div className="flex flex-wrap items-start justify-between gap-5">
+          {/* BTC Watermark */}
+          <div className="absolute right-40 top-1/2 -translate-y-1/2 pointer-events-none select-none opacity-[0.3] blur-[2px]">
+            <img
+              src={coin.src}
+              alt={coin.label}
+              className="w-80 h-80 object-contain"
+            />
+          </div>
+
+
+          <div className="relative z-10 flex flex-col items-center text-center">
             {/* PRICE */}
+            <div className="mt-4 flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-xs font-semibold text-emerald-400">
+                Market Active
+              </span>
+              <br />
+            </div>
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-[26px]">
-                  {coin.icon}
+                  {coin.src && <img src={coin.src} alt={coin.label} className="w-8 h-8" />}
                 </div>
                 <div>
                   <p className="text-slate-400 text-[11px] font-mono">{coin.symbol}</p>
@@ -456,7 +512,10 @@ export default function CryptoPage() {
                   key={price?.price_usd}
                   initial={{ opacity: 0.5, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-slate-800 font-black text-[42px] leading-none tracking-tight"
+                  className="text-white
+                  text-[64px]
+                  font-black
+                  tracking-tight leading-none"
                 >
                   {fmtUSD(price?.price_usd ?? 0)}
                 </motion.p>
@@ -464,9 +523,8 @@ export default function CryptoPage() {
 
               {!loadPrice && price && (
                 <div className="flex items-center gap-3 mt-3">
-                  <span className={`flex items-center gap-1 text-[13px] font-black px-3 py-1.5 rounded-full ${
-                    isUp ? "bg-blue-50 text-blue-600" : "bg-red-50 text-red-500"
-                  }`}>
+                  <span className={`flex items-center gap-1 text-[13px] font-black px-3 py-1.5 rounded-full ${isUp ? "bg-blue-50 text-blue-600" : "bg-red-50 text-red-500"
+                    }`}>
                     {isUp ? <FiTrendingUp size={12} /> : <FiTrendingDown size={12} />}
                     {isUp ? "+" : ""}{price.change_24h.toFixed(2)}%
                   </span>
@@ -477,29 +535,7 @@ export default function CryptoPage() {
               )}
             </div>
 
-            {/* ANALYTICS */}
-            {!loadPrice && analytics && (
-              <div className="flex flex-wrap gap-3">
-                <div className="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 min-w-[90px]">
-                  <p className="text-blue-400 text-[9px] font-black uppercase tracking-widest mb-1">Signal</p>
-                  <p className="text-blue-600 text-[14px] font-black">{analytics.sentiment}</p>
-                </div>
-                <div className="bg-white border border-slate-100 rounded-2xl px-4 py-3 min-w-[90px]">
-                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Volatility</p>
-                  <p className="text-slate-800 text-[14px] font-black">{analytics.volatility}%</p>
-                </div>
-                <div className="bg-white border border-slate-100 rounded-2xl px-4 py-3 min-w-[90px]">
-                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Trend</p>
-                  <p className={`text-[14px] font-black ${analytics.trendScore >= 0 ? "text-blue-600" : "text-red-500"}`}>
-                    {analytics.trendScore >= 0 ? "+" : ""}{analytics.trendScore}%
-                  </p>
-                </div>
-                <div className="bg-white border border-slate-100 rounded-2xl px-4 py-3 min-w-[90px]">
-                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Volume</p>
-                  <p className="text-slate-800 text-[14px] font-black">{fmtVol(analytics.volume)}</p>
-                </div>
-              </div>
-            )}
+
           </div>
         </motion.div>
 
@@ -520,11 +556,10 @@ export default function CryptoPage() {
                 <button
                   key={iv.value}
                   onClick={() => setActiveInterval(iv.value)}
-                  className={`px-3 py-1 rounded-lg text-[11px] font-black transition-all ${
-                    activeInterval === iv.value
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-slate-400 hover:text-slate-700"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-black transition-all ${activeInterval === iv.value
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-slate-400 hover:text-slate-700"
+                    }`}
                 >
                   {iv.label}
                 </button>
@@ -570,6 +605,6 @@ export default function CryptoPage() {
         </motion.div>
 
       </div>
-    </div>
+    </div >
   );
 }

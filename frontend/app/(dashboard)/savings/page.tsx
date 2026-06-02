@@ -1,11 +1,11 @@
 "use client";
 
-//  Monee — Saving Goals Page
+//  FinTrack — Saving Goals Page
 //  Path: app/customer/savings/page.tsx
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, color } from "framer-motion";
 import {
   FiTarget, FiPlus, FiX, FiCalendar,
   FiTrendingUp, FiCheckCircle, FiClock, FiZap,
@@ -84,6 +84,11 @@ const GOAL_EMOJI: Record<string, string> = {
   wedding: "💍", gadget: "📱", fashion: "👗", olahraga: "🏋️",
 };
 
+const bg = "#0d1117";
+const surface = "#161b22";
+const border = "rgba(255,255,255,0.08)";
+const accent = "#4ade80"; // green-400
+
 function getGoalEmoji(category?: string, name?: string) {
   if (category) {
     const key = category.toLowerCase();
@@ -93,11 +98,11 @@ function getGoalEmoji(category?: string, name?: string) {
   }
   if (name) {
     const n = name.toLowerCase();
-    if (n.includes("laptop") || n.includes("pc"))    return "💻";
-    if (n.includes("motor") || n.includes("mobil"))  return "🚗";
+    if (n.includes("laptop") || n.includes("pc")) return "💻";
+    if (n.includes("motor") || n.includes("mobil")) return "🚗";
     if (n.includes("bali") || n.includes("liburan")) return "✈️";
-    if (n.includes("nikah") || n.includes("kawin"))  return "💍";
-    if (n.includes("rumah"))                          return "🏠";
+    if (n.includes("nikah") || n.includes("kawin")) return "💍";
+    if (n.includes("rumah")) return "🏠";
   }
   return "🎯";
 }
@@ -112,7 +117,7 @@ function CreateGoalModal({
   const { data: session } = useSession();
   const token = getTokenFromSession(session);
 
-  const [form, setForm]       = useState({ name: "", targetAmount: "", category: "", deadline: "" });
+  const [form, setForm] = useState({ name: "", targetAmount: "", category: "", deadline: "" });
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit() {
@@ -135,14 +140,15 @@ function CreateGoalModal({
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-              name: form.name,
-              targetAmount: Number(form.targetAmount),
-              category: form.category || undefined,
-              deadline: form.deadline
-                ? new Date(form.deadline).toISOString()
-                : undefined,
+          name: form.name,
+          targetAmount: Number(form.targetAmount),
+          category: form.category || undefined,
+          deadline: form.deadline
+            ? new Date(form.deadline).toISOString()
+            : undefined,
         }),
       });
+
 
       const resBody = await res.clone().json().catch(() => null);
       console.log("📡 [CREATE] status:", res.status, "body:", resBody);
@@ -163,7 +169,8 @@ function CreateGoalModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+      
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         className="absolute inset-0 bg-black/20 backdrop-blur-sm"
@@ -228,7 +235,7 @@ function CreateGoalModal({
         <button
           onClick={handleSubmit}
           disabled={loading || !form.name || !form.targetAmount}
-          className="mt-6 w-full py-3.5 rounded-2xl font-black text-[14px] text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-6 w-full py-3.5 rounded-2xl font-black text-[14px] text-black bg-green-400 hover:bg-green-500 shadow-lg shadow-green-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading
             ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -237,7 +244,7 @@ function CreateGoalModal({
       </motion.div>
     </div>
   );
-}
+} 
 
 // ── Deposit Modal ─────────────────────────────────────────────────
 function DepositModal({
@@ -246,9 +253,9 @@ function DepositModal({
   const { data: session } = useSession();
   const token = getTokenFromSession(session);
 
-  const [amount, setAmount]   = useState("");
+  const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
-  const remaining             = goal.targetAmount - goal.currentAmount;
+  const remaining = goal.targetAmount - goal.currentAmount;
 
   const QUICK = [50000, 100000, 200000, 500000].filter((n) => n <= remaining);
 
@@ -307,7 +314,7 @@ function DepositModal({
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="text-slate-800 font-black text-[18px]">Tambah Dana</h2>
-            <p className="text-slate-400 text-[12px] font-mono mt-0.5 truncate max-w-[200px]">{goal.name}</p>
+            <p className="text-slate-400 text-[12px] font-mono mt-0.5 truncate max-w-50">{goal.name}</p>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors w-8 h-8 rounded-xl hover:bg-slate-100 flex items-center justify-center">
             <FiX size={18} />
@@ -353,7 +360,7 @@ function DepositModal({
         <button
           onClick={handleDeposit}
           disabled={loading || !amount}
-          className="w-full py-3.5 rounded-2xl font-black text-[14px] text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3.5 rounded-2xl font-black text-[14px] text-white bg-green-400 hover:bg-green-500 shadow-lg shadow-green-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading
             ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -369,30 +376,28 @@ function GoalCard({
   goal, onDeposit, index,
 }: { goal: SavingGoal; onDeposit: (g: SavingGoal) => void; index: number }) {
   const progress = pct(goal.currentAmount, goal.targetAmount);
-  const days     = daysLeft(goal.deadline);
-  const done     = progress >= 100;
-  const emoji    = getGoalEmoji(goal.category, goal.name);
+  const days = daysLeft(goal.deadline);
+  const done = progress >= 100;
+  const emoji = getGoalEmoji(goal.category, goal.name);
 
   const barColor = done
     ? "bg-emerald-500"
-    : progress >= 75 ? "bg-blue-500"
-    : progress >= 40 ? "bg-blue-600"
-    : "bg-blue-700";
+    : progress >= 75 ? "bg-green-400"
+      : progress >= 40 ? "bg-green-500"
+        : "bg-green-300";
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      className={`group bg-white border rounded-3xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all duration-300 ${
-        done ? "border-emerald-200 hover:border-emerald-300" : "border-slate-100 hover:border-blue-100"
-      }`}
+      className={`group bg-white border rounded-3xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-all duration-300 ${done ? "border-emerald-200 hover:border-emerald-300" : "border-slate-100 hover:border-blue-100"
+        }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-[20px] shrink-0 ${
-            done ? "bg-emerald-50 border border-emerald-100" : "bg-blue-50 border border-blue-100"
-          }`}>
+          <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-[20px] shrink-0 ${done ? "bg-emerald-50 border border-emerald-100" : "bg-green-50 border border-green-100 "
+            }`}>
             {emoji}
           </div>
           <div className="min-w-0">
@@ -412,7 +417,7 @@ function GoalCard({
         ) : (
           <button
             onClick={() => onDeposit(goal)}
-            className="shrink-0 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-black px-3 py-1.5 rounded-xl shadow-sm shadow-blue-200 transition-all active:scale-95"
+            className="shrink-0 flex items-center gap-1.5 bg-green-400 hover:bg-green-500 text-black text-[11px] font-black px-3 py-1.5 rounded-xl shadow-md shadow-green-500 transition-all active:scale-95"
           >
             <FiPlus size={11} strokeWidth={3} /> Deposit
           </button>
@@ -434,14 +439,13 @@ function GoalCard({
 
       <div>
         <div className="flex justify-between items-center mb-1.5">
-          <span className={`text-[12px] font-black ${done ? "text-emerald-600" : "text-blue-600"}`}>
+          <span className={`text-[12px] font-black ${done ? "text-emerald-600" : "text-black"}`}>
             {progress}%
           </span>
           <div className="flex items-center gap-3">
             {days !== null && !done && (
-              <span className={`flex items-center gap-1 text-[10px] font-bold ${
-                days <= 7 ? "text-red-500" : days <= 30 ? "text-amber-500" : "text-slate-400"
-              }`}>
+              <span className={`flex items-center gap-1 text-[10px] font-bold ${days <= 7 ? "text-red-500" : days <= 30 ? "text-amber-500" : "text-slate-400"
+                }`}>
                 <FiClock size={9} />
                 {days === 0 ? "Hari ini!" : `${days}h lagi`}
               </span>
@@ -454,7 +458,7 @@ function GoalCard({
             )}
           </div>
         </div>
-        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
@@ -470,18 +474,18 @@ function GoalCard({
 // ── Main Page ─────────────────────────────────────────────────────
 export default function SavingsPage() {
   const { data: session } = useSession();
-  const token             = getTokenFromSession(session);
+  const token = getTokenFromSession(session);
 
-  const [goals,       setGoals]       = useState<SavingGoal[]>([]);
-  const [loading,     setLoading]     = useState(true);
-  const [showCreate,  setShowCreate]  = useState(false);
+  const [goals, setGoals] = useState<SavingGoal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
   const [depositGoal, setDepositGoal] = useState<SavingGoal | null>(null);
 
   const fetchGoals = async () => {
     if (!token) return;
     setLoading(true);
     try {
-      const res  = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/saving-goals`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/saving-goals`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -499,17 +503,17 @@ export default function SavingsPage() {
     if (token) fetchGoals();
   }, [token]);
 
-  const totalTarget = goals.reduce((s, g) => s + g.targetAmount,  0);
-  const totalSaved  = goals.reduce((s, g) => s + g.currentAmount, 0);
-  const completed   = goals.filter((g) => g.currentAmount >= g.targetAmount).length;
-  const overallPct  = totalTarget > 0 ? pct(totalSaved, totalTarget) : 0;
+  const totalTarget = goals.reduce((s, g) => s + g.targetAmount, 0);
+  const totalSaved = goals.reduce((s, g) => s + g.currentAmount, 0);
+  const completed = goals.filter((g) => g.currentAmount >= g.targetAmount).length;
+  const overallPct = totalTarget > 0 ? pct(totalSaved, totalTarget) : 0;
 
   return (
     <div
-      className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 xl:px-10"
+      className="min-h-full bg-[#0d1117] px-4 py-6 sm:px-6 lg:px-8 xl:px-10"
       style={{ fontFamily: "var(--font-sans, 'Plus Jakarta Sans', sans-serif)" }}
     >
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-350 mx-auto">
 
         {/* Header */}
         <motion.div
@@ -519,16 +523,16 @@ export default function SavingsPage() {
           className="flex items-center justify-between mb-7"
         >
           <div>
-            <h1 className="text-slate-800 text-[24px] font-black tracking-tight">Saving Goals</h1>
+            <h1 className="text-green-400 text-[24px] font-black tracking-tight">Saving Goals</h1>
             <p className="text-slate-400 text-[12px] font-mono mt-0.5">Rencanakan dan capai target tabunganmu</p>
           </div>
           <motion.button
             onClick={() => setShowCreate(true)}
             whileTap={{ scale: 0.94 }}
-            className="flex items-center gap-2 bg-blue-600 text-white text-[13px] font-black px-5 py-2.5 rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 bg-green-400 text-black text-[13px] font-black px-5 py-2.5 rounded-xl shadow-md shadow-green-400 hover:bg-green-500 transition-colors"
           >
             <FiPlus strokeWidth={3} size={14} />
-            Buat Goal
+            Make New Goal
           </motion.button>
         </motion.div>
 
@@ -596,7 +600,7 @@ export default function SavingsPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-white border border-slate-100 rounded-3xl p-5 space-y-4">
+              <div key={i} className="bg-[#161b22] border border-[rgba(255,255,255,0.08)] text-slate-800 rounded-3xl p-5 space-y-4">
                 <div className="flex gap-3">
                   <Skeleton className="w-11 h-11 shrink-0" />
                   <div className="flex-1 space-y-2">
@@ -619,7 +623,7 @@ export default function SavingsPage() {
               <p className="text-slate-400 text-[13px] font-mono mt-1 mb-6">Mulai buat goal pertamamu!</p>
               <button
                 onClick={() => setShowCreate(true)}
-                className="flex items-center gap-2 bg-blue-600 text-white text-[13px] font-black px-6 py-3 rounded-xl shadow-md shadow-blue-200 hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 bg-green-400 text-black text-[13px] font-black px-6 py-3 rounded-xl shadow-md shadow-green-400 hover:bg-green-500 transition-colors"
               >
                 <FiPlus strokeWidth={3} size={14} /> Buat Goal Pertama
               </button>

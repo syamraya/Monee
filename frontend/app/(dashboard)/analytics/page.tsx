@@ -215,10 +215,10 @@ export default function AnalyticsPage() {
 
   return (
     <div
-      className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-8"
+      className="min-h-full bg-[#0d1117] px-4 py-6 sm:px-6 lg:px-8 xl:px-10"
       style={{ fontFamily: "var(--font-sans, 'Plus Jakarta Sans', sans-serif)" }}
     >
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-350 mx-auto">
 
         {/* ── Header ── */}
         <motion.div
@@ -228,7 +228,7 @@ export default function AnalyticsPage() {
           className="flex items-center justify-between mb-7"
         >
           <div>
-            <h1 className="text-slate-800 text-[24px] font-black tracking-tight">Analytics</h1>
+            <h1 className="text-green-400 text-[24px] font-black tracking-tight">Analytics</h1>
             <p className="text-slate-400 text-[12px] font-mono mt-0.5">Breakdown pengeluaran & pemasukan kamu</p>
           </div>
           {/* Year Picker */}
@@ -239,7 +239,7 @@ export default function AnalyticsPage() {
                 key={y}
                 onClick={() => setYear(y)}
                 className={`px-4 py-2 rounded-xl text-[12px] font-black transition-all ${
-                  year === y ? "bg-blue-600 text-white shadow-md shadow-blue-200" : "text-slate-400 hover:text-slate-600"
+                  year === y ? "bg-green-400 text-white shadow-md shadow-green-200" : "text-slate-400 hover:text-slate-600"
                 }`}
               >
                 {y}

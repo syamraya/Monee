@@ -258,7 +258,7 @@ export default function WalletPage() {
               <div className="grid grid-cols-2 gap-3">
                 <motion.button onClick={() => setModal("topup")} whileTap={{ scale: 0.97 }}
                   initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                  className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-blue-600 text-white font-black text-[14px] shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors">
+                  className="flex items-center justify-center gap-2 py-4 rounded-2xl bg-green-500 text-black font-black text-[14px] shadow-lg shadow-green-200 hover:bg-green-600 transition-colors">
                   <FiArrowUpRight strokeWidth={3} size={16} /> Top Up
                 </motion.button>
                 <motion.button onClick={() => setModal("withdraw")} whileTap={{ scale: 0.97 }}
@@ -271,12 +271,12 @@ export default function WalletPage() {
               {/* Stats */}
               <div className="grid grid-cols-2 gap-3">
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                  className="bg-blue-50 border border-blue-100 rounded-2xl p-4 shadow-sm">
+                  className="bg-green-50 border border-green-100 rounded-2xl p-4 shadow-sm">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <FiArrowUpRight size={12} className="text-blue-600" />
+                    <FiArrowUpRight size={12} className="text-green-600" />
                     <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest">Total Masuk</p>
                   </div>
-                  <p className="text-blue-600 text-[17px] font-black">{fmtIDR(totalIncome)}</p>
+                  <p className="text-green-400 text-[17px] font-black">{fmtIDR(totalIncome)}</p>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
                   className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">

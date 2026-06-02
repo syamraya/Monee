@@ -167,7 +167,7 @@ export default function Sidebar() {
       <div className="flex items-center gap-2.5 h-14 px-3 shrink-0 border-b border-white/[0.05]">
         <div className="w-7 h-7 rounded-lg bg-blue-500 flex items-center justify-center shrink-0 shadow-md shadow-blue-500/40">
           <span className="text-white font-black text-[11px] tracking-tight">
-            M
+            FT
           </span>
         </div>
         <AnimatePresence>
@@ -179,7 +179,7 @@ export default function Sidebar() {
               transition={{ duration: 0.16 }}
               className="text-white font-black text-[15px] tracking-tight whitespace-nowrap"
             >
-              Mon<span className="text-blue-400">ee</span>
+              Fin<span className="text-blue-400">Track</span>
             </motion.p>
           )}
         </AnimatePresence>

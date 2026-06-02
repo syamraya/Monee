@@ -1,11 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import {
-  FiCamera, FiUser, FiMail, FiLock,
-  FiSave, FiCheckCircle, FiAlertCircle,
+  FiAlertCircle,
+  FiCamera,
+  FiCheckCircle,
+  FiLock,
+  FiMail,
+  FiSave,
+  FiUser,
 } from "react-icons/fi";
 
 const API = process.env.NEXT_PUBLIC_BASE_API_URL ?? "http://localhost:3001";
@@ -51,12 +56,12 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
       exit={{ opacity: 0, y: -8, scale: 0.96 }}
       className={`fixed top-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl text-[13px] font-bold border ${
         type === "success"
-          ? "bg-white border-blue-100 text-blue-700 shadow-blue-100/60"
+          ? "bg-white border-green-100 text-green-700 shadow-green-100/60"
           : "bg-white border-red-100 text-red-600 shadow-red-100/60"
       }`}
     >
       {type === "success"
-        ? <FiCheckCircle size={15} className="text-blue-500" />
+        ? <FiCheckCircle size={15} className="text-green-500" />
         : <FiAlertCircle size={15} className="text-red-400" />}
       {msg}
     </motion.div>
@@ -106,22 +111,22 @@ function AvatarSection({ profile, onUploaded, token }: {
   return (
     <div className="flex flex-col items-center gap-3">
       <div className="relative">
-        <div className="w-24 h-24 rounded-3xl overflow-hidden bg-blue-100 border-2 border-blue-100 shadow-md shadow-blue-100/40 flex items-center justify-center">
+        <div className="w-24 h-24 rounded-3xl overflow-hidden bg-green-100 border-2 border-green-100 shadow-md shadow-green-100/40 flex items-center justify-center">
           {preview
             ? <img src={preview} alt="avatar" className="w-full h-full object-cover" />
             : profile
-            ? <span className="text-blue-600 font-black text-[28px]">{getInitials(profile.name)}</span>
+            ? <span className="text-green-400 font-black text-[28px]">{getInitials(profile.name)}</span>
             : <Skeleton className="w-full h-full rounded-none" />}
           {loading && (
             <div className="absolute inset-0 bg-white/70 flex items-center justify-center rounded-3xl">
-              <div className="w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-green-400/30 border-t-green-400 rounded-full animate-spin" />
             </div>
           )}
         </div>
         <button
           onClick={() => inputRef.current?.click()}
           disabled={loading}
-          className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-200 transition-colors active:scale-95 disabled:opacity-50"
+          className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shadow-lg shadow-green-200 transition-colors active:scale-95 disabled:opacity-50"
         >
           <FiCamera size={13} />
         </button>
@@ -142,7 +147,7 @@ function AvatarSection({ profile, onUploaded, token }: {
             <Skeleton className="w-36 h-2.5 mx-auto" />
           </>
         )}
-        <span className="inline-block mt-2 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+        <span className="inline-block mt-2 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-green-50 text-green-400 border border-green-100">
           {profile?.role ?? "USER"}
         </span>
       </div>
@@ -194,19 +199,19 @@ function ProfileForm({ profile, onSaved, token }: {
       <div className="space-y-1.5">
         <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Nama Lengkap</label>
         <div className="relative group">
-          <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" size={16} />
+          <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-green-400 transition-colors" size={16} />
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama kamu" className={inputCls} required />
         </div>
       </div>
       <div className="space-y-1.5">
         <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">Email</label>
         <div className="relative group">
-          <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" size={16} />
+          <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-green-400 transition-colors" size={16} />
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@kamu.com" className={inputCls} required />
         </div>
       </div>
       <button type="submit" disabled={loading}
-        className="w-full py-3.5 rounded-2xl font-black text-[14px] text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70">
+        className="w-full py-3.5 rounded-2xl font-black text-[14px] text-white bg-green-600 hover:bg-green-700 shadow-lg shadow-green-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-70">
         {loading
           ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
           : saved
@@ -255,7 +260,7 @@ function PasswordForm({ token }: { token: string }) {
     }
   }
 
-  const inputCls = "w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all text-slate-800 placeholder:text-slate-300 font-semibold text-[14px]";
+  const inputCls = "w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-500/10 focus:border-green-400 focus:bg-white transition-all text-slate-800 placeholder:text-slate-300 font-semibold text-[14px]";
 
   return (
     <>
@@ -269,7 +274,7 @@ function PasswordForm({ token }: { token: string }) {
           <div key={label} className="space-y-1.5">
             <label className="text-[11px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
             <div className="relative group">
-              <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors" size={16} />
+              <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-green-400 transition-colors" size={16} />
               <input type="password" value={val} onChange={(e) => set(e.target.value)} placeholder={ph} className={inputCls} required />
             </div>
           </div>
@@ -305,7 +310,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-full bg-slate-50 p-6 lg:p-7"
       style={{ fontFamily: "var(--font-sans, 'Plus Jakarta Sans', sans-serif)" }}>
-      <div className="max-w-[860px] mx-auto">
+      <div className="max-w-215 mx-auto">
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="mb-6">
@@ -330,7 +335,7 @@ export default function SettingsPage() {
               {(["profile", "password"] as const).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-5 py-2 rounded-xl text-[13px] font-black transition-all ${
-                    tab === t ? "bg-blue-600 text-white shadow-md shadow-blue-200" : "text-slate-400 hover:text-slate-600"
+                    tab === t ? "bg-green-400 text-blcak shadow-md shadow-green-200" : "text-slate-500 hover:text-slate-600"
                   }`}>
                   {t === "profile" ? "Profile" : "Password"}
                 </button>
@@ -359,14 +364,14 @@ export default function SettingsPage() {
 
             <Card delay={0.14} className="p-5">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-500 shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center text-green-500 shrink-0">
                   <FiCheckCircle size={16} />
                 </div>
                 <div>
                   <p className="text-slate-700 text-[13px] font-bold">Akun Terverifikasi</p>
                   <p className="text-slate-400 text-[11px] font-mono">ID: {profile?.id ?? "──────"}</p>
                 </div>
-                <span className="ml-auto text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                <span className="ml-auto text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full bg-green-50 text-green-400 border border-green-100">
                   {profile?.role ?? "USER"}
                 </span>
               </div>

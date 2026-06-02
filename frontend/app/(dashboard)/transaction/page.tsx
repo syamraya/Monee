@@ -211,7 +211,7 @@ function TransactionModal({
             onClick={() => setType("INCOME")}
             className={`py-3 rounded-2xl font-black text-[13px] transition-all ${
               type === "INCOME"
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                ? "bg-green-400 text-black shadow-md shadow-green-400"
                 : "bg-slate-100 text-slate-500"
             }`}
           >
@@ -290,7 +290,7 @@ function TransactionModal({
             disabled={isLoading}
             className={`w-full py-4 rounded-2xl font-black text-[14px] transition-all flex items-center justify-center gap-2 ${
               type === "INCOME"
-                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-200"
+                ? "bg-green-400 hover:bg-green-500 text-black shadow-md shadow-green-400"
                 : "bg-slate-900 hover:bg-black text-white shadow-lg"
             }`}
           >
@@ -385,12 +385,12 @@ export default function TransactionPage() {
       </AnimatePresence>
 
       <div
-        className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-8 xl:px-10"
+        className="min-h-full bg-[#0d1117] px-4 py-6 sm:px-6 lg:px-8 xl:px-10"
         style={{
           fontFamily: "var(--font-sans, 'Plus Jakarta Sans', sans-serif)",
         }}
       >
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-350 mx-auto">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -399,7 +399,7 @@ export default function TransactionPage() {
             className="flex items-center justify-between mb-7"
           >
             <div>
-              <h1 className="text-slate-800 text-[24px] font-black tracking-tight">
+              <h1 className="text-green-400 text-[24px] font-black tracking-tight">
                 Transaksi
               </h1>
               <p className="text-slate-400 text-[12px] font-mono mt-0.5">
@@ -409,7 +409,7 @@ export default function TransactionPage() {
             <motion.button
               onClick={() => setShowModal(true)}
               whileTap={{ scale: 0.94 }}
-              className="flex items-center gap-2 bg-blue-600 text-white text-[13px] font-black px-5 py-2.5 rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 bg-green-400 text-black text-[13px] font-black px-5 py-2.5 rounded-xl shadow-md shadow-green-400 hover:bg-green-500 transition-colors"
             >
               <FiPlus strokeWidth={3} size={14} />
               Transaksi Baru
