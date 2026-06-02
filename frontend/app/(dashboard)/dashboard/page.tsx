@@ -1296,7 +1296,7 @@ function TransactionList({ transactions }: { transactions: Transaction[] }) {
             ))}
           </div>
           <a
-            href="/customer/transactions"
+            href="/customer/transaction"
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition-colors"
             style={{ color: "#4ade80", background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.15)" }}
           >
