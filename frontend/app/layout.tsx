@@ -17,7 +17,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "FinTrack",
+  title: "Monee",
   description: "Platform keuangan pribadi",
 };
 
