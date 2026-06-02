@@ -694,9 +694,9 @@ export default function FinTrackPage() {
         </div>
 
         <div className="nav-links">
-          <a href="#">Features</a>
-          <a href="#">Analytics</a>
-          <a href="#">Markets</a>
+          <a href="#features">Features</a>
+          <a href="#trusted">Partners</a>
+          <a href="#analytics">Analytics</a>
         </div>
 
 
@@ -780,7 +780,7 @@ export default function FinTrackPage() {
       </section>
 
       {/* TRUSTED */}
-      <section className="trusted">
+      <section id="trusted" className="trusted">
         <p>Big Companies Come With Us</p>
 
         <div className="logos">
@@ -798,7 +798,7 @@ export default function FinTrackPage() {
       </section>
 
       {/* FEATURES */}
-      <section className="section">
+      <section id="features" className="section">
         <p className="section-tag">Features</p>
 
         <h2 className="section-title">
@@ -824,7 +824,7 @@ export default function FinTrackPage() {
       </section>
 
       {/* ANALYTICS */}
-      <section className="section">
+      <section id="analytics" className="section">
         <div className="analytics">
           <div>
             <p className="section-tag">Smart Analytics</p>
