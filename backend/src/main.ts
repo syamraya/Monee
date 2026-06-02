@@ -1,5 +1,5 @@
-import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
@@ -10,7 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: [
-      "http://localhost:3000", 
+      "https://monee-psi.vercel.app", 
+      "https://monee-production.up.railway.app",
     ],
     credentials: true,
   });
