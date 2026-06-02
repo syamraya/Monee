@@ -12,6 +12,7 @@ async function bootstrap() {
     origin: [
       "https://monee-psi.vercel.app", 
       "https://monee-production.up.railway.app",
+      "http://localhost:3000",
     ],
     credentials: true,
   });
