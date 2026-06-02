@@ -210,11 +210,12 @@ const border = "rgba(255,255,255,0.08)";
 const accent = "#4ade80"; // green-400
 
 // ── Shared Components ──────────────────────────────────────────────
-function Skeleton({ className = "" }: { className?: string }) {
+function Skeleton({ className = "", ...props }: { className?: string } & React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={`animate-pulse rounded-xl ${className}`}
-      style={{ background: "rgba(255,255,255,0.06)" }}
+      style={{ background: "rgba(255,255,255,0.06)", ...props.style }}
+      {...props}
     />
   );
 }
@@ -774,7 +775,7 @@ function UserCard({ user, stats }: { user: User | null; stats: Stats | null }) {
                     {show ? fmtIDR(user.balance) : "Rp ••••••••"}
                   </p>
                 ) : (
-                  <Skeleton className="w-36 h-6" style={{ background: "rgba(255,255,255,0.1)" } as any} />
+                  <Skeleton className="w-36 h-6" style={{ background: "rgba(255,255,255,0.1)" }} />
                 )}
                 <motion.button
                   onClick={() => setShow(!show)}
