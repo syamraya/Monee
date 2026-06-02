@@ -1,6 +1,9 @@
-import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import * as dotenv from "dotenv";
 import { AppModule } from "./app.module";
+
+dotenv.config();
 
 async function bootstrap() {
   // Paksa IPv4 agar koneksi SMTP Gmail tidak timeout

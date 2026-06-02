@@ -22,8 +22,14 @@ const handler = NextAuth({
         const data = await res.json();
         console.log("AUTH DATA:", data); // cek di terminal
 
-        if (res.ok && data) return data;
-        return null;
+        if (!res.ok) return null;
+        return {
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role,
+          accessToken: data.access_token,
+        };
       },
     }),
   ],
@@ -43,7 +49,7 @@ const handler = NextAuth({
       return session;
     },
   },
-  pages: { signIn: "/sign-in" },
+  pages: { signIn: "/sign-in" },  
   secret: process.env.NEXTAUTH_SECRET,
 });
 

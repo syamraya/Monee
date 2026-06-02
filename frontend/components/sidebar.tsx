@@ -39,7 +39,8 @@ import {
   FiLogOut,
   FiCreditCard,
 } from "react-icons/fi";
-import { SiBitcoin } from "react-icons/si";
+import { SiBit, SiBitcoin, SiSocialblade, SiStockx } from "react-icons/si";
+
 
 // ── Nav items — edit sesuai kebutuhan ─────────────────────────────
 const NAV_ITEMS = [
@@ -48,6 +49,7 @@ const NAV_ITEMS = [
   { icon: FiList, label: "Transaction", href: "/transaction" },
   { icon: FiPieChart, label: "Analytics", href: "/analytics" },
   { icon: SiBitcoin, label: "Crypto", href: "/market" },
+  { icon: SiSocialblade, label: "US Stocks", href: "/stock" },
   { icon: FiGlobe, label: "News", href: "/news" },
   { icon: FiCreditCard, label: "Wallet", href: "/wallet" },
 ];
@@ -82,7 +84,7 @@ function Tooltip({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -6 }}
             transition={{ duration: 0.12 }}
-            className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-[999] pointer-events-none"
+            className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-999 pointer-events-none"
           >
             <div className="relative bg-[#1e293b] text-white/90 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg whitespace-nowrap shadow-2xl">
               {label}
@@ -118,8 +120,8 @@ function NavItem({
           px-2.5 py-2.5 rounded-xl transition-all duration-150
           ${
             isActive
-              ? "bg-white/[0.10] text-white"
-              : "text-white/30 hover:text-white/70 hover:bg-white/[0.05]"
+              ? "bg-white/10 text-white"
+              : "text-white/30 hover:text-white/70 hover:bg-white/5"
           }
         `}
       >
@@ -127,7 +129,7 @@ function NavItem({
         {isActive && (
           <motion.span
             layoutId="pill"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[18px] bg-blue-400 rounded-r-full"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-0.75 h-4.5 bg-green-400 rounded-r-full"
           />
         )}
 
@@ -165,15 +167,15 @@ export default function Sidebar() {
       onMouseLeave={() => setExpanded(false)}
       className="
         relative h-screen shrink-0 flex flex-col z-30
-        bg-[#0f172a] border-r border-white/[0.05]
+        bg-[#0f172a] border-r border-white/5
         overflow-hidden
       "
     >
       {/* ── Logo ── */}
-      <div className="flex items-center gap-2.5 h-14 px-3 shrink-0 border-b border-white/[0.05]">
-        <div className="w-7 h-7 rounded-lg bg-blue-500 flex items-center justify-center shrink-0 shadow-md shadow-blue-500/40">
-          <span className="text-white font-black text-[11px] tracking-tight">
-            FT
+      <div className="flex items-center gap-2.5 h-14 px-3 shrink-0 border-b border-white/5">
+        <div className="w-7 h-7 rounded-lg bg-green-400 flex items-center justify-center shrink-0 shadow-md shadow-green-500/40">
+          <span className="text-black font-black text-[11px] tracking-tight">
+            M
           </span>
         </div>
         <AnimatePresence>
@@ -185,7 +187,7 @@ export default function Sidebar() {
               transition={{ duration: 0.16 }}
               className="text-white font-black text-[15px] tracking-tight whitespace-nowrap"
             >
-              Fin<span className="text-blue-400">Track</span>
+              <span className="text-green-400">Monee</span>
             </motion.p>
           )}
         </AnimatePresence>
@@ -208,7 +210,7 @@ export default function Sidebar() {
       </nav>
 
       {/* ── Bottom ── */}
-      <div className="px-1.5 pb-3 flex flex-col gap-0.5 border-t border-white/[0.05] pt-3">
+      <div className="px-1.5 pb-3 flex flex-col gap-0.5 border-t border-white/5 pt-3">
         {BOTTOM_ITEMS.map((item) => (
           <NavItem
             key={item.href}

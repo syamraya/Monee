@@ -21,6 +21,7 @@ export class MarketController {
     return this.marketService.getGoldNews();
   }
 
+  
 
   @UseGuards(JwtAuthGuard)
   @Get('analytics')

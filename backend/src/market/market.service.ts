@@ -22,13 +22,21 @@ function setCache(key: string, data: any, ttlMs: number) {
 }
 
 const SUPPORTED_COINS = ['bitcoin', 'ethereum', 'solana', 'binancecoin', 'ripple'];
-
 const COIN_SYMBOL_MAP: Record<string, string> = {
   bitcoin: 'BTC',
   ethereum: 'ETH',
   solana: 'SOL',
   binancecoin: 'BNB',
   ripple: 'XRP',
+};
+
+const SUPPORTED_STOCKS = ['AAPL', 'GOOGL', 'TSLA', 'META', 'NVDA'];
+const STOCK_SYMBOL_MAP: Record<string, string> = {
+  AAPL: 'aapl.us',
+  GOOGL: 'googl.us',
+  TSLA: 'tsla.us',
+  META: 'meta.us',
+  NVDA: 'nvda.us',
 };
 
 // Map frontend interval ke CoinGecko days param
