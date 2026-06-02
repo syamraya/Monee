@@ -605,7 +605,7 @@ export default function AdminDashboardPage() {
         </motion.div>
 
         <p className="text-center text-slate-300 text-[11px] font-medium mt-8">
-          © 2026 FinTrack Admin Panel
+          © 2026 Monee Admin Panel
         </p>
       </div>
     </div>
