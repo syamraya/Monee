@@ -8,11 +8,11 @@ async function main() {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash('admin123', salt);
     const admin = await prisma.user.upsert({
-        where: { email: 'admin@fintrack.com' },
+        where: { email: 'admin@monee.com' },
         update: {},
         create: {
-            email: 'admin@fintrack.com',
-            name: 'Super Admin FinTrack',
+            email: 'admin@monee.com',
+            name: 'Super Admin Monee',
             password: hashedPassword,
             role: client_1.Role.ADMIN,
             balance: 0,

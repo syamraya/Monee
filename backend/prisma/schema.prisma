@@ -50,7 +50,7 @@ model SavingGoal {
   name            String
   targetAmount    Float
   currentAmount   Float     @default(0)
-  category        String ?   @default("Lainnya")
+  category        String    @default("Lainnya")
   deadline        DateTime?
   isRecurrent     Boolean   @default(false)
   recurrentAmount Float     @default(0)

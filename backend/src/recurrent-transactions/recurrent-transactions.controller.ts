@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, UseGuards, Request, Delete, Param } from '@nestjs/common';
 import { RecurrentTransactionsService } from './recurrent-transactions.service';
 import { CreateRecurrentDto } from './dto/create-recurrent.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('recurrent-transactions')
 @UseGuards(JwtAuthGuard)

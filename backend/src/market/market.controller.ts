@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, Param } from '@nestjs/common';
 import { MarketService } from './market.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -21,7 +21,6 @@ export class MarketController {
     return this.marketService.getGoldNews();
   }
 
-  
 
   @UseGuards(JwtAuthGuard)
   @Get('analytics')
@@ -50,4 +49,23 @@ export class MarketController {
       Number(limit) || 500,
     );
   }
+
+
+@Get('indices')
+getStockIndices() {
+  return this.marketService.getStockIndices();
+}
+
+@Get('stock/:symbol')
+getStockQuote(@Param('symbol') symbol: string) {
+  return this.marketService.getStockQuote(symbol.toUpperCase());
+}
+
+@Get('stock-chart/:symbol')
+getStockChart(
+  @Param('symbol') symbol: string,
+  @Query('range') range: '1D' | '1W' | '1M' = '1M',
+) {
+  return this.marketService.getStockChart(symbol.toUpperCase(), range);
+}
 }

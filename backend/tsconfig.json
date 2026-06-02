@@ -2,30 +2,24 @@
   "compilerOptions": {
     "module": "CommonJS",
     "target": "ES2021",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": "./",
-    "declaration": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": "",
+    "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "incremental": false,
+    "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["node", "multer"],
-    "noEmit": false
+    "types": ["node", "multer", "jest"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test",
-    "**/*.spec.ts"
-  ]
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
 }

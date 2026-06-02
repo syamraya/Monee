@@ -30,8 +30,6 @@ async findAll(userId: string) {
   const goals = await this.prisma.savingGoal.findMany({
     where: { userId },
   });
-  
-  
 
   return goals.map(goal => ({
     ...goal,

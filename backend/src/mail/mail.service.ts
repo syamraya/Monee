@@ -4,8 +4,8 @@ import { BrevoClient } from '@getbrevo/brevo';
 @Injectable()
 export class MailService {
   private client: BrevoClient;
-  private senderEmail = process.env.MAIL_FROM || process.env.EMAIL_USER || 'fintrack444@gmail.com';
-  private senderName = process.env.MAIL_FROM_NAME || 'FinTrack Admin';
+  private senderEmail = process.env.MAIL_FROM || process.env.EMAIL_USER || 'moneeapps@gmail.com';
+  private senderName = process.env.MAIL_FROM_NAME || 'Monee Admin';
 
   constructor() {
     const apiKey = process.env.BREVO_API_KEY;

@@ -7,7 +7,7 @@ async function main() {
   console.log('🏁 Memulai Seeding...');
 
   // 1. Setup Data Admin
-  const adminEmail = 'admin@fintrack.com';
+  const adminEmail = 'admin@monee.com';
   const adminPassword = 'admin123';
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
@@ -20,7 +20,7 @@ async function main() {
     },
     create: {
       email: adminEmail,
-      name: 'Super Admin FinTrack',
+      name: 'Super Admin Monee',
       password: hashedPassword,
       role: Role.ADMIN,
       balance: 0,
@@ -35,6 +35,7 @@ async function main() {
     update: {},
     create: {
       name: 'Umum',
+      type: 'EXPENSE',
     },
   });
 

@@ -1,9 +1,6 @@
-import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import * as dotenv from "dotenv";
+import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
-
-dotenv.config();
 
 async function bootstrap() {
   // Paksa IPv4 agar koneksi SMTP Gmail tidak timeout
@@ -14,7 +11,6 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       "http://localhost:3000", 
-      "https://fintrack-new-pi.vercel.app",
     ],
     credentials: true,
   });
